@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cryptographic App</title>
+</head>
+<body>
+    <h1>Cryptography Application</h1>
+
+    <h2>🔐 Encrypt Text</h2>
+    <form method="POST" action="/encrypt_text">
+        <textarea name="text" rows="4" cols="50" placeholder="Enter text to encrypt..."></textarea><br>
+        <label>Algorithm:</label>
+        <select name="method">
+            <option value="AES">AES</option>
+            <option value="DES">DES</option>
+            <option value="ChaCha20">ChaCha20</option>
+            <option value="RSA">RSA</option>
+        </select>
+        <br><br>
+        <input type="submit" value="Encrypt">
+    </form>
+    {% if result %}
+        <h3>Encrypted Output:</h3>
+        <textarea rows="4" cols="70">{{ result }}</textarea>
+    {% endif %}
+
+    <hr>
+
+    <h2>🔎 Hash Text</h2>
+    <form method="POST" action="/hash_text">
+        <textarea name="text" rows="4" cols="50" placeholder="Enter text to hash..."></textarea><br>
+        <label>Hash Algorithm:</label>
+        <select name="hash_method">
+            <option value="MD5">MD5</option>
+            <option value="SHA1">SHA1</option>
+            <option value="SHA256">SHA256</option>
+            <option value="SHA512">SHA512</option>
+        </select>
+        <br><br>
+        <input type="submit" value="Hash">
+    </form>
+    {% if hash_result %}
+        <h3>Hashed Output:</h3>
+        <textarea rows="2" cols="70">{{ hash_result }}</textarea>
+    {% endif %}
+</body>
+</html>
