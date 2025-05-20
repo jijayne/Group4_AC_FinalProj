@@ -1,125 +1,174 @@
 from flask import Flask, render_template, request
-from Crypto.Cipher import AES, DES, Blowfish, PKCS1_OAEP
-from Crypto.Util.Padding import pad, unpad
-from Crypto.PublicKey import RSA
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.kdf.concatkdf import ConcatKDFHash
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-import base64
-import hashlib
+from crypto_algorithms.hashing import hash_text
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from crypto_algorithms.symmetric import (
+    aes_encrypt_text, aes_decrypt_text,
+    des_encrypt_text, des_decrypt_text,
+    generate_fernet_key, fernet_encrypt_text, fernet_decrypt_text
+)
+from crypto_algorithms.asymmetric import (
+    generate_keys, rsa_encrypt_text, rsa_decrypt_text,
+    generate_ecc_keys, ecc_encrypt_text, ecc_decrypt_text
+)
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 
-# -------- SYMMETRIC HELPERS --------
-def get_block_size(algorithm):
-    return {'AES': 16, 'DES': 8, 'Blowfish': 8}.get(algorithm, 16)
-
-def generate_key(key, algorithm):
-    if algorithm == 'AES':
-        return hashlib.sha256(key.encode()).digest()
-    elif algorithm == 'DES':
-        return hashlib.md5(key.encode()).digest()[:8]
-    elif algorithm == 'Blowfish':
-        return hashlib.sha256(key.encode()).digest()[:16]
-    return None
-
-def encrypt(text, key, algorithm):
-    block_size = get_block_size(algorithm)
-    key = generate_key(key, algorithm)
-    if algorithm == 'AES':
-        cipher = AES.new(key, AES.MODE_ECB)
-    elif algorithm == 'DES':
-        cipher = DES.new(key, DES.MODE_ECB)
-    elif algorithm == 'Blowfish':
-        cipher = Blowfish.new(key, Blowfish.MODE_ECB)
-    else:
-        return "Unsupported Algorithm"
-    padded_text = pad(text.encode(), block_size)
-    encrypted = cipher.encrypt(padded_text)
-    return base64.b64encode(encrypted).decode()
-
-def decrypt(text, key, algorithm):
-    block_size = get_block_size(algorithm)
-    key = generate_key(key, algorithm)
-    try:
-        if algorithm == 'AES':
-            cipher = AES.new(key, AES.MODE_ECB)
-        elif algorithm == 'DES':
-            cipher = DES.new(key, DES.MODE_ECB)
-        elif algorithm == 'Blowfish':
-            cipher = Blowfish.new(key, Blowfish.MODE_ECB)
-        else:
-            return "Unsupported Algorithm"
-        decrypted = cipher.decrypt(base64.b64decode(text))
-        unpadded = unpad(decrypted, block_size)
-        return unpadded.decode()
-    except Exception as e:
-        return f"Decryption Error: {str(e)}"
-
-# -------- ASYMMETRIC HELPERS --------
-# RSA
-def rsa_encrypt_decrypt(action, text):
-    key = RSA.generate(2048)
-    public_key = key.publickey()
-    if action == 'encrypt':
-        cipher = PKCS1_OAEP.new(public_key)
-        encrypted = cipher.encrypt(text.encode())
-        return base64.b64encode(encrypted).decode()
-    else:
-        cipher = PKCS1_OAEP.new(key)
-        try:
-            decrypted = cipher.decrypt(base64.b64decode(text.encode()))
-            return decrypted.decode()
-        except:
-            return "Invalid RSA decryption input."
-
-# ECC
-def ecc_encrypt_decrypt(action, text):
-    private_key = ec.generate_private_key(ec.SECP384R1())
-    peer_public_key = private_key.public_key()
-    shared_key = private_key.exchange(ec.ECDH(), peer_public_key)
-    kdf = ConcatKDFHash(algorithm=hashes.SHA256(), length=32, otherinfo=None)
-    aes_key = kdf.derive(shared_key)
-    iv = os.urandom(16)
-    cipher = Cipher(algorithms.AES(aes_key), modes.CFB(iv))
-    cryptor = cipher.encryptor() if action == 'encrypt' else cipher.decryptor()
-    try:
-        result = cryptor.update(text.encode()) + cryptor.finalize()
-        return base64.b64encode(iv + result).decode() if action == 'encrypt' else result.decode(errors='ignore')
-    except:
-        return "Invalid ECC decryption input."
-
-# -------- ROUTES --------
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    result = None
-    if request.method == 'POST':
-        algorithm = request.form['algorithm']
-        action = request.form['action']
-        key = request.form['key']
-        text = request.form['text']
-        if action == 'encrypt':
-            result = encrypt(text, key, algorithm)
-        elif action == 'decrypt':
-            result = decrypt(text, key, algorithm)
-    return render_template('index.html', result=result)
+    return render_template('index.html')
 
-@app.route('/asymmetric', methods=['GET', 'POST'])
-def asymmetric():
-    result = None
+# Test AES Text
+@app.route('/test_aes')
+def test_aes():
+    message = "hello world"
+    key = "mypassword"
+    encrypted = aes_encrypt_text(message, key)
+    decrypted = aes_decrypt_text(encrypted, key)
+    return f"<h2><u>AES</u></h2><b>Original:</b> {message}<br><b>Encrypted:</b> {encrypted}<br><b>Decrypted:</b> {decrypted}"
+
+# Test DES Text
+@app.route('/test_des')
+def test_des():
+    message = "secret msg"
+    key = "key123"
+    encrypted = des_encrypt_text(message, key)
+    decrypted = des_decrypt_text(encrypted, key)
+    return f"<h2><u>DES</u></h2><b>Original:</b> {message}<br><b>Encrypted:</b> {encrypted}<br><b>Decrypted:</b> {decrypted}"
+
+# Test Fernet Text
+@app.route('/test_fernet')
+def test_fernet():
+    message = "fernet test"
+    key = generate_fernet_key()
+    encrypted = fernet_encrypt_text(message, key)
+    decrypted = fernet_decrypt_text(encrypted, key)
+    return f"<h2><u>Fernet</u></h2><b>Original:</b> {message}<br><b>Key:</b> {key}<br><b>Encrypted:</b> {encrypted}<br><b>Decrypted:</b> {decrypted}"
+
+@app.route('/encrypt', methods=['GET', 'POST'])
+def encrypt():
+    encrypted = None
+    text_to_download = None
     if request.method == 'POST':
-        algorithm = request.form['algorithm']
-        action = request.form['action']
         text = request.form['text']
-        if algorithm == 'RSA':
-            result = rsa_encrypt_decrypt(action, text)
-        elif algorithm == 'ECC':
-            result = ecc_encrypt_decrypt(action, text)
-        else:
-            result = "Unsupported Asymmetric Algorithm"
-    return render_template('asymmetric.html', result=result)
+        key = request.form['key']
+        algorithm = request.form['algorithm']
+
+        try:
+            if algorithm == 'aes':
+                encrypted = aes_encrypt_text(text, key)
+            elif algorithm == 'des':
+                encrypted = des_encrypt_text(text, key)
+            elif algorithm == 'fernet':
+                if not key.startswith("gAAAA"):
+                    key = generate_fernet_key()
+                encrypted = fernet_encrypt_text(text, key)
+        except Exception as e:
+            encrypted = f"Encryption error: {str(e)}"
+
+        text_to_download = encrypted
+
+    return render_template('encrypt.html', encrypted=encrypted, text_to_download=text_to_download)
+
+
+
+@app.route('/decrypt', methods=['GET', 'POST'])
+def decrypt():
+    decrypted = None
+    if request.method == 'POST':
+        text = request.form['text']
+        key = request.form['key']
+        algorithm = request.form['algorithm']
+
+        try:
+            if algorithm == 'aes':
+                decrypted = aes_decrypt_text(text, key)
+            elif algorithm == 'des':
+                decrypted = des_decrypt_text(text, key)
+            elif algorithm == 'fernet':
+                decrypted = fernet_decrypt_text(text, key)
+        except Exception as e:
+            decrypted = f"Decryption error: {str(e)}"
+
+    return render_template('decrypt.html', decrypted=decrypted)
+
+
+@app.route('/hash', methods=['GET', 'POST'])
+def hash_page():
+    hashed = None
+    if request.method == 'POST':
+        text = request.form['text']
+        algorithm = request.form['algorithm']
+        hashed = hash_text(text, algorithm)
+
+    return render_template('hash.html', hashed=hashed)
+
+# RSA Encryption/Decryption
+
+@app.route('/rsa', methods=['GET', 'POST'])
+def rsa_page():
+    encrypted = decrypted = public_key = private_key = None
+    if request.method == 'POST':
+        action = request.form['action']
+        message = request.form['text']
+
+        try:
+            if action == 'generate':
+                public_key, private_key = generate_keys()
+            elif action == 'encrypt':
+                public_key = request.form['public_key']
+                encrypted = rsa_encrypt_text(message, public_key)
+            elif action == 'decrypt':
+                private_key = request.form['private_key']
+                decrypted = rsa_decrypt_text(message, private_key)
+        except Exception as e:
+            if action == 'encrypt':
+                encrypted = f"Encryption error: {str(e)}"
+            elif action == 'decrypt':
+                decrypted = f"Decryption error: {str(e)}"
+
+    return render_template('rsa.html', encrypted=encrypted, decrypted=decrypted,
+                           public_key=public_key, private_key=private_key)
+
+
+@app.route('/ecc', methods=['GET', 'POST'])
+def ecc_page():
+    encrypted = decrypted = public_key = private_key = None
+    if request.method == 'POST':
+        action = request.form['action']
+        message = request.form['text']
+
+        if action == 'generate':
+            public_key, private_key = generate_ecc_keys()
+        elif action == 'encrypt':
+            public_key = request.form['public_key']
+            try:
+                encrypted = ecc_encrypt_text(message, public_key)
+            except Exception as e:
+                encrypted = f"Encryption error: {str(e)}"
+        elif action == 'decrypt':
+            private_key = request.form['private_key']
+            try:
+                decrypted = ecc_decrypt_text(message, private_key)
+            except Exception as e:
+                decrypted = f"Decryption error: {str(e)}"
+
+    return render_template('ecc.html', encrypted=encrypted, decrypted=decrypted,
+                           public_key=public_key, private_key=private_key)
+
+
+@app.route('/download', methods=['POST'])
+def download():
+    content = request.form['content']
+    filename = request.form.get('filename', 'output.txt')
+    
+    response = make_response(content) # type: ignore
+    response.headers.set('Content-Disposition', f'attachment; filename={filename}')
+    response.headers.set('Content-Type', 'text/plain')
+    return response
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,61 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>SecureFlow</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>🔐 Crypto Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .card:hover {
+            transform: scale(1.02);
+            transition: 0.3s;
+        }
+    </style>
 </head>
-<body>
-    <nav>
-        <h1>SecureFlow</h1>
-        <ul>
-            <li><a href="#">🏠 root@home</a></li>
-            <li><a class="active" href="#">🛡️ symmetric</a></li>
-            <li><a href="#">🔐 asymmetric</a></li>
-            <li><a href="#"># hashing</a></li>
-            <li><a href="#">💬 secure_chat</a></li>
-            <li><a href="#">ℹ️ algorithms</a></li>
-        </ul>
-    </nav>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Crypto App</a>
+  </div>
+</nav>
 
-    <main>
-        <section class="panel">
-            <h2>Symmetric Encryption</h2>
-            <form method="POST">
-                <label>Algorithm</label>
-                <select name="algorithm">
-                    <option value="AES">AES (Advanced Encryption Standard)</option>
-                    <option value="DES">DES (Data Encryption Standard)</option>
-                    <option value="Blowfish">Blowfish</option>
-                </select>
+<div class="container">
+    <h1 class="mb-4 text-center">🔐 Cryptography Toolbox</h1>
 
-                <label>Action</label>
-                <select name="action">
-                    <option value="encrypt">Encrypt</option>
-                    <option value="decrypt">Decrypt</option>
-                </select>
-
-                <label>Mode</label>
-                <select name="mode">
-                    <option value="text">Text</option>
-                </select>
-
-                <label>Encryption/Decryption Key</label>
-                <input type="text" name="key" required>
-
-                <label>Text</label>
-                <textarea name="text" rows="6" required></textarea>
-
-                <button type="submit">PROCESS</button>
-            </form>
-
-            {% if result %}
-                <div class="result">
-                    <h3>Output</h3>
-                    <textarea readonly rows="4">{{ result }}</textarea>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Encrypt 🔒</h5>
+                    <p class="card-text">Use AES, DES, or Fernet to encrypt text.</p>
+                    <a href="/encrypt" class="btn btn-success">Go to Encrypt</a>
                 </div>
-            {% endif %}
-        </section>
-    </main>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Decrypt 🔓</h5>
+                    <p class="card-text">Decrypt AES, DES, or Fernet-encrypted messages.</p>
+                    <a href="/decrypt" class="btn btn-primary">Go to Decrypt</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Hash 🧮</h5>
+                    <p class="card-text">Generate one-way hashes like SHA-256, MD5, etc.</p>
+                    <a href="/hash" class="btn btn-warning">Go to Hashing</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">RSA 🔐</h5>
+                    <p class="card-text">Generate RSA keys and encrypt or decrypt messages.</p>
+                    <a href="/rsa" class="btn btn-secondary">Use RSA</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">ECC 🚀</h5>
+                    <p class="card-text">Use Elliptic Curve Cryptography for secure messaging.</p>
+                    <a href="/ecc" class="btn btn-dark">Use ECC</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
