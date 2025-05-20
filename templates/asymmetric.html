@@ -2,46 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asymmetric Encryption</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/symmetric">Symmetric</a></li>
-            <li><a href="/asymmetric" class="active">Asymmetric</a></li>
-            <li><a href="/hashing">Hashing</a></li>
-            <li><a href="/secure_chat">Secure Chat</a></li>
-        </ul>
-    </nav>
-
     <div class="container">
         <h1>Asymmetric Encryption</h1>
-        <form method="POST" action="/asymmetric">
-            <label for="action">Action</label>
-            <select name="action" id="action">
+
+        <form method="POST">
+            <label for="algorithm">Choose Algorithm:</label>
+            <select name="algorithm" required>
+                <option value="RSA">RSA</option>
+                <option value="ECC">ECC</option>
+            </select>
+
+            <label for="action">Action:</label>
+            <select name="action" required>
                 <option value="encrypt">Encrypt</option>
                 <option value="decrypt">Decrypt</option>
             </select>
 
-            <label for="key">Key</label>
-            <textarea name="key" rows="4" placeholder="Paste your public/private key here..."></textarea>
+            <label for="text">Enter Text:</label>
+            <textarea name="text" rows="5" required placeholder="Enter text to encrypt or decrypt..."></textarea>
 
-            <label for="message">Message</label>
-            <textarea name="message" rows="4" placeholder="Enter your message or ciphertext here..."></textarea>
-
-            <button type="submit">Process</button>
+            <button type="submit">Submit</button>
         </form>
 
         {% if result %}
-            <div class="result">
+            <div class="result-box">
                 <h2>Result:</h2>
                 <textarea readonly rows="6">{{ result }}</textarea>
             </div>
         {% endif %}
-    </div>
 
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">← Back to Symmetric</a>
+        </div>
+    </div>
 </body>
 </html>
