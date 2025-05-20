@@ -1,26 +1,22 @@
-from Crypto.Cipher import AES, DES, ChaCha20
-from Crypto.Random import get_random_bytes
+from Crypto.Cipher import AES
 import base64
 
 def pad(text):
-    return text + (16 - len(text) % 16) * ' '
+    # Pad with spaces to make length multiple of 16 bytes
+    while len(text) % 16 != 0:
+        text += ' '
+    return text
 
-def encrypt_aes(text):
-    key = get_random_bytes(16)
+def encrypt_aes(text, key):
+    key = key.ljust(16)[:16].encode()  # Ensure key is 16 bytes
     cipher = AES.new(key, AES.MODE_ECB)
-    padded = pad(text)
-    encrypted = cipher.encrypt(padded.encode())
-    return f"AES Encrypted: {base64.b64encode(encrypted).decode()}"
+    padded_text = pad(text).encode()
+    encrypted = cipher.encrypt(padded_text)
+    return base64.b64encode(encrypted).decode()
 
-def encrypt_des(text):
-    key = get_random_bytes(8)
-    cipher = DES.new(key, DES.MODE_ECB)
-    padded = pad(text)
-    encrypted = cipher.encrypt(padded[:8].encode())
-    return f"DES Encrypted: {base64.b64encode(encrypted).decode()}"
-
-def encrypt_chacha(text):
-    key = get_random_bytes(32)
-    cipher = ChaCha20.new(key=key)
-    encrypted = cipher.encrypt(text.encode())
-    return f"ChaCha20 Encrypted: {base64.b64encode(encrypted).decode()}"
+def decrypt_aes(encrypted_b64, key):
+    key = key.ljust(16)[:16].encode()
+    cipher = AES.new(key, AES.MODE_ECB)
+    encrypted = base64.b64decode(encrypted_b64)
+    decrypted = cipher.decrypt(encrypted).decode().rstrip()
+    return decrypted

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Symmetric Encryption</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Symmetric Encryption</h1>
+        <form method="post" action="/symmetric">
+            <label for="algorithm">Algorithm</label>
+            <select name="algorithm" id="algorithm">
+                <option value="AES">AES (Advanced Encryption Standard)</option>
+                <option value="DES">DES (Data Encryption Standard)</option>
+                <option value="Blowfish">Blowfish</option>
+            </select>
+
+            <label for="action">Action</label>
+            <select name="action" id="action">
+                <option value="encrypt">Encrypt</option>
+                <option value="decrypt">Decrypt</option>
+            </select>
+
+            <label for="mode">Mode</label>
+            <select name="mode" id="mode">
+                <option value="text">Text</option>
+                <!-- Future: file -->
+            </select>
+
+            <label for="key">Encryption/Decryption Key</label>
+            <input type="text" name="key" id="key" required>
+
+            <label for="text">Text</label>
+            <textarea name="text" id="text" rows="6" required></textarea>
+
+            <button type="submit">Process</button>
+        </form>
+
+        {% if result %}
+            <div class="result">
+                <h2>Result</h2>
+                <textarea readonly rows="6">{{ result }}</textarea>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+body {
+    background: linear-gradient(to bottom, #1a0033, #001f33);
+    color: #00f0ff;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-color: #130025;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1em 2em;
+    border-bottom: 1px solid #00ffff66;
+}
+
+nav h1 {
+    color: #00ffcc;
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1em;
+}
+
+nav ul li a {
+    color: #00ffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a.active,
+nav ul li a:hover {
+    color: #ff33cc;
+    text-shadow: 0 0 5px #ff33cc;
+}
+
+main {
+    padding: 2em;
+    display: flex;
+    justify-content: center;
+}
+
+.panel {
+    background: #0a001a;
+    border: 1px solid #00ffff33;
+    border-radius: 10px;
+    padding: 2em;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 0 10px #00ffff55;
+}
+
+.panel h2 {
+    color: #00ffcc;
+    margin-bottom: 1em;
+}
+
+form label {
+    display: block;
+    margin: 0.5em 0 0.2em;
+    font-weight: bold;
+    color: #66ffff;
+}
+
+form input,
+form select,
+form textarea {
+    width: 100%;
+    padding: 0.7em;
+    background: #001f2d;
+    border: 1px solid #00f0ff44;
+    color: #ffffff;
+    margin-bottom: 1em;
+    border-radius: 5px;
+}
+
+form button {
+    background: #00ffcc;
+    border: none;
+    padding: 0.7em 1.5em;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #00ffcc;
+    transition: all 0.3s ease;
+}
+
+form button:hover {
+    background: #00ccaa;
+    box-shadow: 0 0 10px #00ffccaa;
+}
+
+.result {
+    margin-top: 2em;
+    padding: 1em;
+    background: #001020;
+    border: 1px solid #00ffff22;
+    border-radius: 8px;
+}
+
+.result textarea {
+    background: #000814;
+    color: #00ffcc;
+    border: 1px solid #00ffff22;
+    padding: 0.5em;
+    width: 100%;
+    resize: none;
+}

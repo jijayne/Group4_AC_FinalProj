@@ -1,45 +1,84 @@
-from flask import Flask, render_template, request, send_file
-from crypto import symmetric, asymmetric, hashing
-import os
+from flask import Flask, render_template, request
+from Crypto.Cipher import AES, DES, Blowfish
+from Crypto.Util.Padding import pad, unpad
+import base64
+import hashlib
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "sample_files"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Helper: Get block size per algorithm
+def get_block_size(algorithm):
+    return {
+        'AES': 16,
+        'DES': 8,
+        'Blowfish': 8
+    }.get(algorithm, 16)
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+# Helper: Generate key of proper length
+def generate_key(key, algorithm):
+    if algorithm == 'AES':
+        return hashlib.sha256(key.encode()).digest()
+    elif algorithm == 'DES':
+        return hashlib.md5(key.encode()).digest()[:8]
+    elif algorithm == 'Blowfish':
+        return hashlib.sha256(key.encode()).digest()[:16]
+    return None
 
+# Encryption logic
+def encrypt(text, key, algorithm):
+    block_size = get_block_size(algorithm)
+    key = generate_key(key, algorithm)
 
-@app.route("/encrypt_text", methods=["POST"])
-def encrypt_text():
-    text = request.form["text"]
-    method = request.form["method"]
-
-    if method == "AES":
-        encrypted = symmetric.encrypt_aes(text)
-    elif method == "DES":
-        encrypted = symmetric.encrypt_des(text)
-    elif method == "ChaCha20":
-        encrypted = symmetric.encrypt_chacha(text)
-    elif method == "RSA":
-        encrypted = asymmetric.encrypt_rsa(text)
+    if algorithm == 'AES':
+        cipher = AES.new(key, AES.MODE_ECB)
+    elif algorithm == 'DES':
+        cipher = DES.new(key, DES.MODE_ECB)
+    elif algorithm == 'Blowfish':
+        cipher = Blowfish.new(key, Blowfish.MODE_ECB)
     else:
-        encrypted = "Unsupported method."
+        return "Unsupported Algorithm"
 
-    return render_template("index.html", result=encrypted)
+    padded_text = pad(text.encode(), block_size)
+    encrypted = cipher.encrypt(padded_text)
+    return base64.b64encode(encrypted).decode()
 
+# Decryption logic
+def decrypt(text, key, algorithm):
+    block_size = get_block_size(algorithm)
+    key = generate_key(key, algorithm)
 
-@app.route("/hash_text", methods=["POST"])
-def hash_text():
-    text = request.form["text"]
-    method = request.form["hash_method"]
+    try:
+        if algorithm == 'AES':
+            cipher = AES.new(key, AES.MODE_ECB)
+        elif algorithm == 'DES':
+            cipher = DES.new(key, DES.MODE_ECB)
+        elif algorithm == 'Blowfish':
+            cipher = Blowfish.new(key, Blowfish.MODE_ECB)
+        else:
+            return "Unsupported Algorithm"
 
-    hashed = hashing.hash_text(text, method)
+        decrypted = cipher.decrypt(base64.b64decode(text))
+        unpadded = unpad(decrypted, block_size)
+        return unpadded.decode()
+    except Exception as e:
+        return f"Decryption Error: {str(e)}"
 
-    return render_template("index.html", hash_result=hashed)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    result = None
 
+    if request.method == 'POST':
+        algorithm = request.form['algorithm']
+        action = request.form['action']
+        key = request.form['key']
+        text = request.form['text']
 
-if __name__ == "__main__":
+        if action == 'encrypt':
+            result = encrypt(text, key, algorithm)
+        elif action == 'decrypt':
+            result = decrypt(text, key, algorithm)
+
+    return render_template('index.html', result=result)
+
+if __name__ == '__main__':
     app.run(debug=True)
