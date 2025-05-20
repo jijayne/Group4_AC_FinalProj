@@ -174,15 +174,13 @@
   <h1>🧮 Hashing Tool</h1>
   <form method="POST" action="/hash" novalidate>
     <label for="inputText">Enter text to hash:</label>
-    <textarea id="inputText" name="inputText" rows="4" placeholder="Type text here..." required
-      >{{ request.form.inputText or '' }}</textarea
-    >
+    <textarea id="inputText" name="inputText" rows="4" placeholder="Type text here..." required>{{ inputText or '' }}</textarea>
 
     <label for="algorithm">Hash Algorithm:</label>
     <select id="algorithm" name="algorithm" required>
-      <option value="sha256" {% if request.form.algorithm == 'sha256' %}selected{% endif %}>SHA-256</option>
-      <option value="sha1" {% if request.form.algorithm == 'sha1' %}selected{% endif %}>SHA-1</option>
-      <option value="md5" {% if request.form.algorithm == 'md5' %}selected{% endif %}>MD5</option>
+      <option value="sha256" {% if algorithm == 'sha256' %}selected{% endif %}>SHA-256</option>
+      <option value="sha1" {% if algorithm == 'sha1' %}selected{% endif %}>SHA-1</option>
+      <option value="md5" {% if algorithm == 'md5' %}selected{% endif %}>MD5</option>
     </select>
 
     <button type="submit" aria-label="Generate hash">Generate Hash</button>

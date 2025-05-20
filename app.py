@@ -143,11 +143,12 @@ def decrypt():
 def hash_page():
     hashed = None
     if request.method == 'POST':
-        text = request.form['text']
-        algorithm = request.form['algorithm']
-        hashed = hash_text(text, algorithm)
-
+        text = request.form.get('inputText', '')  # changed from 'text' to 'inputText'
+        algorithm = request.form.get('algorithm', '')
+        if text and algorithm:
+            hashed = hash_text(text, algorithm)
     return render_template('hash.html', hashed=hashed)
+
 
 # RSA Encryption/Decryption
 
