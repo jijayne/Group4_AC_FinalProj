@@ -23,6 +23,20 @@ def rsa_decrypt_text(cipher_text, priv_key_str):
     decrypted = rsa.decrypt(base64.b64decode(cipher_text), priv_key)
     return decrypted.decode()
 
+def rsa_encrypt_file(input_path, output_path, pub_key_str):
+    with open(input_path, 'rb') as f:
+        data = f.read()
+    encrypted = rsa_encrypt_text(data.decode(), pub_key_str)
+    with open(output_path, 'w') as f:
+        f.write(encrypted)
+
+def rsa_decrypt_file(input_path, output_path, priv_key_str):
+    with open(input_path, 'r') as f:
+        encrypted = f.read()
+    decrypted = rsa_decrypt_text(encrypted, priv_key_str)
+    with open(output_path, 'wb') as f:
+        f.write(decrypted.encode())
+
 # --- ECC Imports ---
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes, serialization
@@ -48,7 +62,7 @@ def generate_ecc_keys():
 
     return public_pem, private_pem
 
-# === ECC Encrypt ===
+# === ECC Encrypt Text ===
 def ecc_encrypt_text(text, public_key_str):
     public_key = serialization.load_pem_public_key(public_key_str.encode())
     ephemeral_key = ec.generate_private_key(ec.SECP384R1())
@@ -73,7 +87,7 @@ def ecc_encrypt_text(text, public_key_str):
 
     return base64.b64encode(ephemeral_pub + iv + ciphertext).decode()
 
-# === ECC Decrypt ===
+# === ECC Decrypt Text ===
 def ecc_decrypt_text(ciphertext_b64, private_key_str):
     private_key = serialization.load_pem_private_key(private_key_str.encode(), password=None)
     data = base64.b64decode(ciphertext_b64.encode())
@@ -95,3 +109,19 @@ def ecc_decrypt_text(ciphertext_b64, private_key_str):
     cipher = Cipher(algorithms.AES(aes_key), modes.CFB(iv))
     decryptor = cipher.decryptor()
     return decryptor.update(ciphertext) + decryptor.finalize()
+
+# === ECC Encrypt File ===
+def ecc_encrypt_file(input_path, output_path, public_key_str):
+    with open(input_path, 'rb') as f:
+        data = f.read()
+    encrypted = ecc_encrypt_text(data.decode(), public_key_str)
+    with open(output_path, 'w') as f:
+        f.write(encrypted)
+
+# === ECC Decrypt File ===
+def ecc_decrypt_file(input_path, output_path, private_key_str):
+    with open(input_path, 'r') as f:
+        encrypted = f.read()
+    decrypted = ecc_decrypt_text(encrypted, private_key_str)
+    with open(output_path, 'wb') as f:
+        f.write(decrypted)
