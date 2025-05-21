@@ -1,4 +1,4 @@
-# 🔐 Applied Cryptography Application
+# 🔐 Applied Cryptography Application 
 #### 21: May 2025
 
 <br>
@@ -25,6 +25,31 @@
 # 🧩 Discussions
 #### 🔧 Application Architecture & UI
 
-##### The application is developed using **Python** and **Streamlit** as the UI framework. Streamlit enables rapid development of web-based user interfaces with minimal overhead. The system is modularized into algorithm components for symmetric encryption, asymmetric encryption, and hashing. Each cryptographic operation is executed from its respective module and integrated into the Streamlit interface.
+##### The application is developed using Python and Streamlit as the UI framework. Streamlit enables rapid development of web-based user interfaces with minimal overhead. The system is modularized into algorithm components for symmetric encryption, asymmetric encryption, and hashing. Each cryptographic operation is executed from its respective module and integrated into the Streamlit interface.
+
+<br>
 
 # 🔐 Implemented Cryptographic Algorithms
+### 1. AES - Symmetric Algorithm
+**Type**: Symmetric (Text & File Encryption/Decryption)
+- **Background**: Advanced Encryption Standard (AES) was standardized by NIST in 2001 and is widely used in secure communication.
+- **Process**: Encrypts plaintext using a symmetric key and CBC mode with PKCS7 padding. Uses 128-bit block size.
+- 
+<br>
+
+### 2. RSA - Asymmetric Algorithm
+- **Type**: Asymmetric (Text Encryption/Decryption)
+- **Background**: RSA (Rivest-Shamir-Adleman) is a public-key cryptographic algorithm introduced in 1977. It relies on the mathematical difficulty of factoring large primes.
+
+<br>
+
+### 3. SHA-256, SHA-1, MD5, BLAKE2b - Hash Functions
+- **Background**:
+- - **SHA-256**: Secure Hash Algorithm, 256-bit output, part of SHA-2 family.
+- - **SHA-1**: 160-bit output, legacy standard.
+- - **MD5**: 128-bit hash, now considered insecure for cryptographic use.
+- - **BLAKE2b**: Modern, secure and fast hash function alternative.
+
+<br>
+
+### 4. fcsdfcc
