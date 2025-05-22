@@ -52,9 +52,9 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
 ## 🔐 Cryptographic Algorithms Implemented
 
 ### 💡 Discussions
-🔸 Symmetric Encryption
+**🔸 Symmetric Encryption**
 
-1. AES (Advanced Encryption Standard)
+**1. AES (Advanced Encryption Standard)**
    
    Type: Symmetric
    
@@ -66,7 +66,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Used for both text and file encryption via Flask backend.
 
-2. DES (Data Encryption Standard)
+**2. DES (Data Encryption Standard)**
 
    Type: Symmetric
    
@@ -78,7 +78,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Implemented for legacy comparison in encryption options.
 
-3. XOR Cipher
+**3. XOR Cipher**
    
    Type: Symmetric
    
@@ -90,9 +90,9 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Used for basic text encryption with a provided key.
 
-🔹 Asymmetric Encryption
+**🔹 Asymmetric Encryption**
 
-4. RSA (Rivest–Shamir–Adleman)
+**4. RSA (Rivest–Shamir–Adleman)**
 
    Type: Asymmetric
    
@@ -104,7 +104,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Allows users to generate keys and perform RSA encryption/decryption of messages.
 
-5. ECC (Elliptic Curve Cryptography)
+**5. ECC (Elliptic Curve Cryptography)**
    
    Type: Asymmetric
    
@@ -118,7 +118,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
 
 🔹 Hashing Algorithms
 
-6. MD5 (Message Digest Algorithm 5)
+**6. MD5 (Message Digest Algorithm 5)**
 
    Type: Hashing
    
@@ -130,7 +130,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Accepts user input or files and displays the resulting MD5 hash.
 
-7. SHA-1 (Secure Hash Algorithm 1)
+**7. SHA-1 (Secure Hash Algorithm 1)**
    
    Type: Hashing
    
@@ -142,7 +142,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Available for hashing text and file inputs.
 
-8. SHA-256
+**8. SHA-256**
     
    Type: Hashing
    
@@ -154,7 +154,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Used to demonstrate modern, secure hashing.
 
-9. SHA-512
+**9. SHA-512**
     
    Type: Hashing
    
