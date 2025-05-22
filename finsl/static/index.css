@@ -1,0 +1,94 @@
+/* Matrix-style background and font */
+body {
+    background-color: black;
+    color: #0f0;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0f0;
+    border-radius: 10px;
+}
+canvas#matrix {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: black;
+}
+
+/* Header */
+h2 {
+    text-align: center;
+    color: #0f0;
+    margin-bottom: 1.5rem;
+}
+
+/* Labels and Inputs */
+label {
+    color: #0f0;
+}
+
+textarea.form-control,
+input.form-control,
+select.form-select {
+    background-color: #000;
+    color: #0f0;
+    border: 1px solid #0f0;
+}
+
+textarea.form-control:focus,
+input.form-control:focus,
+select.form-select:focus {
+    box-shadow: none;
+    border-color: #0f0;
+    background-color: #000;
+    color: #0f0;
+}
+
+/* Button */
+.btn-primary {
+    background-color: #0f0;
+    color: black;
+    border: 1px solid #0f0;
+}
+
+.btn-primary:hover {
+    background-color: #0a0;
+    color: black;
+}
+
+.btn-outline-primary {
+    color: #0f0;
+    border: 1px solid #0f0;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0f0;
+    color: black;
+}
+
+/* Flash messages */
+.alert-warning {
+    background-color: rgba(255, 255, 0, 0.1);
+    color: #ff0;
+    border-color: #ff0;
+}
+
+/* Result section */
+hr {
+    border-top: 1px solid #0f0;
+}
+
+h5 {
+    color: #0f0;
+}
