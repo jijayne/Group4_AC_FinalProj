@@ -194,6 +194,20 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
 4. Open your browser and navigate to:
    ```bash
    http://127.0.0.1:5000
+   
+## Sample Runs/Outputs:
+
+Click here to view sample run and output screenshots of our web application:
+
+https://drive.google.com/drive/folders/1CSQahAPPuGPLcGw6NmTLqMv3JG0GgSbc?usp=sharing
+
+This will redirect you to a collection of images showcasing the core features and functionality of the system.
+
+## Youtube Link:
+
+Watch our project discussion and live demo here.
+
+This video explains the features, algorithms used, and includes a full walkthrough of our web application in action.
 
 ## License
 This project is for educational purposes under the Applied Cryptography course. Not intended for real-world production use.
