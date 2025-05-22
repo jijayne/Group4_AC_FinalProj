@@ -119,19 +119,19 @@ def hash_sha512(data_bytes):
 @app.route('/')
 def dashboard():
     symmetric_algos = [
-        {"name": "AES", "description": "Advanced Encryption Standard with 128/192/256-bit keys."},
-        {"name": "DES", "description": "Data Encryption Standard, now largely obsolete but historically important."},
-        {"name": "XOR", "description": "Applied bitwise to the plaintext and the secret key"}
+        {"name": "AES", "description": "A widely-used symmetric cipher that encrypts data in fixed-size blocks (128 bits) using key sizes of 128, 192, or 256 bits. Known for its speed and strong security, AES is the standard for securing sensitive data."},
+        {"name": "DES", "description": "An older symmetric block cipher that uses a 56-bit key. Though historically important, DES is now considered insecure for many applications due to its small key size."},
+        {"name": "XOR", "description": "An enhancement of DES that applies the algorithm three times with either two or three keys, improving security over standard DES but slower and gradually being phased out in favor of AES."}
     ]
     asymmetric_algos = [
-        {"name": "RSA", "description": "Widely used public-key algorithm for secure data transmission."},
-        {"name": "ElGamal", "description": "Based on Diffie-Hellman key exchange, used in digital signatures."}
+        {"name": "RSA", "description": "A public-key encryption algorithm that uses large integers and prime factorization for secure key exchange and encryption. RSA is commonly used in digital signatures and secure data transmission."},
+        {"name": "ECC", "description": "A modern public-key encryption method offering strong security with smaller keys. ECC is efficient and ideal for mobile and embedded systems where processing power and storage are limited."}
     ]
     hashing_algos = [
-        {"name": "MD5", "description": "Message Digest Algorithm 5, fast but insecure."},
-        {"name": "SHA-1", "description": "Secure Hash Algorithm 1, outdated due to collision attacks."},
-        {"name": "SHA-256", "description": "Part of SHA-2 family, used widely in blockchain and security."},
-        {"name": "SHA-3", "description": "Latest SHA family using sponge construction."}
+        {"name": "MD5", "description": "Produces a 128-bit hash. It’s fast but vulnerable to collisions, making it unsuitable for secure cryptographic use. Still used for file checksums where security isn't critical."},
+        {"name": "SHA-1", "description": "Outputs a 160-bit hash. Once popular, but now deprecated in favor of more secure versions due to proven collision attacks."},
+        {"name": "SHA-256", "description": "Generates a 256-bit hash and is part of the SHA-2 family. It’s widely used in secure applications like blockchain, digital certificates, and data integrity verification."},
+        {"name": "SHA-512", "description": "A 512-bit version of SHA-2, offering even stronger collision resistance. Suitable for high-security systems where a longer hash is needed."}
     ]
     return render_template("dashboard.html",
                            symmetric_algos=symmetric_algos,
@@ -141,21 +141,21 @@ def dashboard():
 ALGORITHM_DETAILS = {
     "symmetric": {
         "AES": {
-            "history": "Developed by Vincent Rijmen and Joan Daemen in 1998. Selected by NIST as the new standard in 2001.",
-            "pseudocode": "KeyExpansion();\nInitialRound();\nFor 9 rounds: SubBytes(), ShiftRows(), MixColumns(), AddRoundKey();\nFinalRound();",
-            "process": "AES encrypts blocks of 128 bits using substitution-permutation network and key sizes of 128, 192, or 256 bits.",
-            "use_cases": "Used in SSL/TLS, VPNs, disk encryption, and secure file transfers."
+            "history": "Adopted by NIST in 2001 as the successor to DES, developed by Belgian cryptographers Vincent Rijmen and Joan Daemen (Rijndael algorithm).",
+            "Library Used": "Crypto.Cipher.AES",
+            "How It Works": "Operates on 128-bit blocks using key sizes of 128, 192, or 256 bits. Involves substitution-permutation network over multiple rounds.",
+            "use_cases":"Used in SSL/TLS, VPNs, disk encryption, and secure file transfers."
         },
         "DES": {
-            "history": "Developed by IBM in the 1970s and adopted as a federal standard in 1977.",
-            "pseudocode": "InitialPermutation();\n16 Rounds of: Expansion, KeyMixing, S-Box, Permutation;\nFinalPermutation();",
-            "process": "DES is a block cipher that encrypts 64-bit blocks using a 56-bit key and 16 rounds of Feistel structure.",
+            "history": "Developed by IBM and adopted as a federal standard in 1977. Once a cornerstone of encryption but now considered insecure due to its 56-bit key.",
+            "Library Used": "Crypto.Cipher.DES",
+            "How It Works": "Encrypts 64-bit blocks using 16 Feistel rounds and a 56-bit key.",
             "use_cases": "Historically used in banking systems; now replaced due to vulnerabilities."
         },
         "XOR": {
             "history": "One of the earliest and simplest encryption methods, dating back to early computer systems. Used primarily for educational purposes or simple obfuscation.",
-            "pseudocode": "For each byte in plaintext:\n    ciphertext_byte = plaintext_byte XOR key_byte;",
-            "process": "The XOR cipher encrypts data by applying the XOR (exclusive OR) operation between the plaintext and a repeating key. Decryption is done by applying the same XOR operation again.",
+            "Library Used": " Custom Python implementation",
+            "How It Works": "Performs a bitwise XOR between data and a key. Easily reversible but not secure for real-world use.",
             "use_cases": "Used in basic data masking, simple file obfuscation, and as a foundational concept in modern cryptographic algorithms."
         }
 
@@ -163,22 +163,40 @@ ALGORITHM_DETAILS = {
     "asymmetric": {
         "RSA": {
             "history": "Introduced in 1977 by Ron Rivest, Adi Shamir, and Leonard Adleman.",
-            "pseudocode": "Generate keys: (n, e, d);\nEncryption: c = m^e mod n;\nDecryption: m = c^d mod n;",
-            "process": "RSA uses two large prime numbers to generate public/private key pairs based on modular exponentiation.",
+            "Library Used": "Crypto.PublicKey.RSA, Crypto.Cipher.PKCS1_OAEP",
+            "How It Works": "Based on factoring large primes; generates public and private key pairs. Encrypts with public key, decrypts with private key.",
             "use_cases": "Used in secure data transmission, digital signatures, and key exchange."
         },
-        "ElGamal": {
-            "history": "Introduced by Taher ElGamal in 1985, based on the Diffie-Hellman key exchange; widely used in cryptographic protocols and digital signatures.",
-            "pseudocode": "KeyGen: Choose large prime p, generator g, secret x; Compute public key y = g^x mod p;\nEncrypt: Choose random k; Compute c1 = g^k mod p, c2 = m * y^k mod p;\nDecrypt: m = c2 / c1^x mod p;",
-            "process": "ElGamal is an asymmetric encryption algorithm based on discrete logarithms. It uses a pair of public and private keys for encryption and decryption, supporting both confidentiality and digital signatures.",
+        "ECC": {
+            "history": "Proposed in the 1980s by Neal Koblitz and Victor Miller as an alternative to RSA with smaller key sizes and equivalent security.",
+            "Library Used": "ecdsa",
+            "How It Works": "Uses elliptic curves over finite fields to generate keys. Offers strong encryption with efficient computation.",
             "use_cases": "Used in secure communication protocols (e.g., PGP, GPG), digital signatures, and hybrid encryption systems."
         }
     },
     "hashing": {
+        "MD5": {
+            "history": "Developed by Ronald Rivest in 1991, MD5 was widely used for checksums and data integrity.",
+            "Library Used": "Padding -> Initialize state -> Process blocks -> Produce final hash;",
+            "How It Works": "MD5 processes input in 512-bit blocks to produce a 128-bit hash output.",
+            "use_cases": "Used for checksums, but not recommended for security due to vulnerabilities."
+        },
+        "SHA-1": {
+            "history": "Developed by NSA in 1993, SHA-1 was widely used for digital signatures and certificates.",
+            "Library Used": "Padding -> Initialize state -> Process blocks -> Produce final hash;",
+            "How It Works": "SHA-1 processes input in 512-bit blocks to produce a 160-bit hash output.",
+            "use_cases": "Used in SSL/TLS, digital signatures, and certificates, but deprecated due to vulnerabilities."
+        },
+        "SHA-512": {
+            "history": "Part of the SHA-2 family designed by NSA and published in 2001 by NIST.",
+            "Library Used": "Padding -> Parsing -> Initial hash values -> Compression function over message blocks;",
+            "How It Works": "SHA-512 processes input in 1024-bit blocks to produce a 512-bit fixed hash output.",
+            "use_cases": "Used in secure applications like SSL/TLS, digital signatures, and file integrity checks."
+        },
         "SHA-256": {
             "history": "Part of the SHA-2 family designed by the NSA and published in 2001 by NIST.",
-            "pseudocode": "Padding -> Parsing -> Initial hash values -> Compression function over message blocks;",
-            "process": "SHA-256 processes input in 512-bit blocks to produce a 256-bit fixed hash output.",
+            "Library Used": "Padding -> Parsing -> Initial hash values -> Compression function over message blocks;",
+            "How It Works": "SHA-256 processes input in 512-bit blocks to produce a 256-bit fixed hash output.",
             "use_cases": "Widely used in blockchain (e.g., Bitcoin), digital signatures, and file integrity checks."
         }
     }
