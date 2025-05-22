@@ -1,18 +1,15 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Cryptographic Application</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    <div class="container">
-    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary mb-3">
-        &larr; Back to Dashboard
-    </a>
+    <div class="container my-4">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary mb-3">&larr; Back to Dashboard</a>
         <h2>Cryptographic Application</h2>
 
         {% with messages = get_flashed_messages() %}
@@ -25,7 +22,7 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" id="cryptoForm">
             <div class="mb-3">
                 <label for="input_data" class="form-label">Enter Text (optional if uploading a file)</label>
                 <textarea class="form-control" name="input_data" id="input_data" rows="4">{{ request.form.input_data or '' }}</textarea>
@@ -33,43 +30,62 @@
 
             <div class="mb-3">
                 <label for="file" class="form-label">Upload File (optional)</label>
-                <input class="form-control" type="file" name="file" id="file">
+                <input class="form-control" type="file" name="file" id="file" />
             </div>
 
             <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="algorithm" class="form-label">Select Algorithm</label>
-                <select class="form-select" name="algorithm" id="algorithm" required>
-                    <option value="">-- Choose an algorithm --</option>
+                <div class="col-md-6">
+                    <label for="algorithm" class="form-label">Select Algorithm</label>
+                    <select class="form-select" name="algorithm" id="algorithm" required>
+                        <option value="">-- Choose an algorithm --</option>
 
-                    <optgroup label="Symmetric Algorithms">
-                        <option value="aes">AES</option>
-                        <option value="des3">3DES</option>
-                        <option value="xor">XOR</option>
-                    </optgroup>
+                        <optgroup label="Symmetric Algorithms">
+                            <option value="aes" {% if request.form.algorithm == 'aes' %}selected{% endif %}>AES</option>
+                            <option value="des3" {% if request.form.algorithm == 'des3' %}selected{% endif %}>3DES</option>
+                            <option value="xor" {% if request.form.algorithm == 'xor' %}selected{% endif %}>XOR</option>
+                        </optgroup>
 
-                    <optgroup label="Asymmetric Algorithms">
-                        <option value="rsa">RSA</option>
-                        <option value="ecc">ECC</option>
-                    </optgroup>
+                        <optgroup label="Asymmetric Algorithms">
+                            <option value="rsa" {% if request.form.algorithm == 'rsa' %}selected{% endif %}>RSA</option>
+                            <option value="ecc" {% if request.form.algorithm == 'ecc' %}selected{% endif %}>ECC</option>
+                        </optgroup>
 
-                    <optgroup label="Hashing Functions">
-                        <option value="md5">MD5</option>
-                        <option value="sha1">SHA1</option>
-                        <option value="sha256">SHA256</option>
-                        <option value="sha512">SHA512</option>
-                    </optgroup>
-                </select>
-            </div>
-
+                        <optgroup label="Hashing Functions">
+                            <option value="md5" {% if request.form.algorithm == 'md5' %}selected{% endif %}>MD5</option>
+                            <option value="sha1" {% if request.form.algorithm == 'sha1' %}selected{% endif %}>SHA1</option>
+                            <option value="sha256" {% if request.form.algorithm == 'sha256' %}selected{% endif %}>SHA256</option>
+                            <option value="sha512" {% if request.form.algorithm == 'sha512' %}selected{% endif %}>SHA512</option>
+                        </optgroup>
+                    </select>
+                </div>
 
                 <div class="col-md-6">
                     <label for="action" class="form-label">Select Action</label>
                     <select class="form-select" name="action" id="action" required>
                         <option value="">-- Choose an action --</option>
-                        <option value="encrypt">Encrypt</option>
-                        <option value="decrypt">Decrypt</option>
+                        <option value="encrypt" {% if request.form.action == 'encrypt' %}selected{% endif %}>Encrypt</option>
+                        <option value="decrypt" {% if request.form.action == 'decrypt' %}selected{% endif %}>Decrypt</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Key Pair Section: Only show for asymmetric algorithms -->
+            <div id="keyPairSection" style="display:none; padding: 1rem 0;">
+                <h6 class="mb-2">Key Pair Input (for RSA and ECC)</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label for="public_key" class="form-label small">Public Key</label>
+                        <textarea class="form-control form-control-sm" name="public_key" id="public_key" rows="3" style="font-size:0.9rem;">{{ request.form.public_key or '' }}</textarea>
+                        <input class="form-control form-control-sm mt-1" type="file" name="public_key_file" id="public_key_file" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="private_key" class="form-label small">Private Key</label>
+                        <textarea class="form-control form-control-sm" name="private_key" id="private_key" rows="3" style="font-size:0.9rem;">{{ request.form.private_key or '' }}</textarea>
+                        <input class="form-control form-control-sm mt-1" type="file" name="private_key_file" id="private_key_file" />
+                    </div>
+                </div>
+                <div class="text-end mt-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="generateKeysBtn">Generate Key Pair</button>
                 </div>
             </div>
 
@@ -79,11 +95,58 @@
         </form>
 
         {% if result %}
-            <hr>
+            <hr />
             <h5 class="mt-4">Result:</h5>
             <textarea class="form-control mt-2" rows="6" readonly>{{ result }}</textarea>
         {% endif %}
-        
     </div>
+
+    <script>
+        function toggleKeyPairSection() {
+            const algo = document.getElementById('algorithm').value;
+            const keySection = document.getElementById('keyPairSection');
+            if (algo === 'rsa' || algo === 'ecc') {
+                keySection.style.display = 'block';
+            } else {
+                keySection.style.display = 'none';
+            }
+        }
+
+        document.getElementById('algorithm').addEventListener('change', toggleKeyPairSection);
+        document.getElementById('action').addEventListener('change', toggleKeyPairSection);
+        window.onload = toggleKeyPairSection;
+
+        // Generate Key Pair functionality
+        document.getElementById('generateKeysBtn').addEventListener('click', async () => {
+            const algo = document.getElementById('algorithm').value;
+            if (!(algo === 'rsa' || algo === 'ecc')) {
+                alert('Select RSA or ECC to generate a key pair.');
+                return;
+            }
+            const btn = document.getElementById('generateKeysBtn');
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            try {
+                const response = await fetch('/generate_keys', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({algorithm: algo})
+                });
+                const data = await response.json();
+                if (data.public_key && data.private_key) {
+                    document.getElementById('public_key').value = data.public_key;
+                    document.getElementById('private_key').value = data.private_key;
+                } else {
+                    alert('Failed to generate key pair.');
+                }
+            } catch (e) {
+                alert('Error generating key pair.');
+            }
+            btn.disabled = false;
+            btn.textContent = 'Generate Key Pair';
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>

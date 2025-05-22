@@ -2,12 +2,14 @@ from flask import Flask, request, render_template, send_file, flash, abort
 from Crypto.Cipher import AES, DES3, PKCS1_OAEP
 from Crypto.Util.Padding import pad, unpad
 from Crypto.PublicKey import RSA
+from Crypto.PublicKey import ECC
 from Crypto.Random import get_random_bytes
 from Crypto.Hash import MD5, SHA1, SHA256, SHA512
 from ecdsa import SigningKey, NIST384p
 import io
 import base64
 import hashlib
+from flask import jsonify
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey123'
@@ -210,6 +212,22 @@ def algorithm_info(algo_type, name):
     else:
         abort(404, description="Algorithm not found") 
 
+@app.route('/generate_keys', methods=['POST'])
+def generate_keys():
+    algo = request.json.get('algorithm')
+    if algo == 'rsa':
+        key = RSA.generate(2048)
+        private_key = key.export_key().decode('utf-8')
+        public_key = key.publickey().export_key().decode('utf-8')
+        return jsonify({'public_key': public_key, 'private_key': private_key})
+    elif algo == 'ecc':
+        key = ECC.generate(curve='P-256')
+        private_key = key.export_key(format='PEM')
+        public_key = key.public_key().export_key(format='PEM')
+        return jsonify({'public_key': public_key, 'private_key': private_key})
+    else:
+        return jsonify({'error': 'Invalid algorithm'}), 400
+
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     result = None
@@ -218,6 +236,26 @@ def index():
         action = request.form.get('action')
         input_text = request.form.get('input_data', '').strip()
         file = request.files.get('file')
+
+         # --- Key pair handling for RSA/ECC ---
+        public_key = None
+        private_key = None
+
+        # Get public key (textarea or file)
+        public_key_text = request.form.get('public_key', '').strip()
+        public_key_file = request.files.get('public_key_file')
+        if public_key_file and public_key_file.filename:
+            public_key = public_key_file.read().decode('utf-8')
+        elif public_key_text:
+            public_key = public_key_text
+
+        # Get private key (textarea or file)
+        private_key_text = request.form.get('private_key', '').strip()
+        private_key_file = request.files.get('private_key_file')
+        if private_key_file and private_key_file.filename:
+            private_key = private_key_file.read().decode('utf-8')
+        elif private_key_text:
+            private_key = private_key_text
 
         if file and file.filename != '':
             data_bytes = file.read()
@@ -268,32 +306,53 @@ def index():
 
             elif algorithm == 'rsa':
                 if action == 'encrypt':
-                    encrypted = rsa_encrypt(data_bytes)
+                    if not public_key:
+                        flash('Public key required for RSA encryption.')
+                        return render_template('index.html', result=result)
+                    rsa_pubkey = RSA.import_key(public_key)
+                    cipher = PKCS1_OAEP.new(rsa_pubkey)
+                    encrypted = cipher.encrypt(data_bytes)
                     if filename:
                         return send_file(io.BytesIO(encrypted), as_attachment=True, download_name=f'{filename}.rsa.enc')
                     else:
                         result = base64.b64encode(encrypted).decode('utf-8')
                 elif action == 'decrypt':
+                    if not private_key:
+                        flash('Private key required for RSA decryption.')
+                        return render_template('index.html', result=result)
+                    rsa_privkey = RSA.import_key(private_key)
+                    cipher = PKCS1_OAEP.new(rsa_privkey)
                     if filename:
-                        decrypted = rsa_decrypt(data_bytes)
+                        decrypted = cipher.decrypt(data_bytes)
                         return send_file(io.BytesIO(decrypted), as_attachment=True, download_name=f'{filename}.rsa.dec')
                     else:
-                        result = rsa_decrypt(base64.b64decode(input_text)).decode('utf-8')
+                        decrypted = cipher.decrypt(base64.b64decode(input_text))
+                        result = decrypted.decode('utf-8')
 
             elif algorithm == 'ecc':
                 if action == 'encrypt':
-                    encrypted = ecc_encrypt(data_bytes)
+                    if not public_key:
+                        flash('Public key required for ECC encryption.')
+                        return render_template('index.html', result=result)
+                    ecc_pubkey = ECC.import_key(public_key)
+                    shared_key = hashlib.sha256(ecc_pubkey.export_key(format='DER')).digest()[:16]
+                    encrypted = aes_encrypt_with_key(data_bytes, shared_key)
                     if filename:
                         return send_file(io.BytesIO(encrypted), as_attachment=True, download_name=f'{filename}.ecc.enc')
                     else:
                         result = base64.b64encode(encrypted).decode('utf-8')
                 elif action == 'decrypt':
+                    if not private_key:
+                        flash('Private key required for ECC decryption.')
+                        return render_template('index.html', result=result)
+                    ecc_privkey = ECC.import_key(private_key)
+                    shared_key = hashlib.sha256(ecc_privkey.public_key().export_key(format='DER')).digest()[:16]
                     if filename:
-                        decrypted = ecc_decrypt(data_bytes)
+                        decrypted = aes_decrypt_with_key(data_bytes, shared_key)
                         return send_file(io.BytesIO(decrypted), as_attachment=True, download_name=f'{filename}.ecc.dec')
                     else:
-                        result = ecc_decrypt(base64.b64decode(input_text)).decode('utf-8')
-
+                        decrypted = aes_decrypt_with_key(base64.b64decode(input_text), shared_key)
+                        result = decrypted.decode('utf-8')
             elif algorithm in ('md5', 'sha1', 'sha256', 'sha512'):
                 if action == 'decrypt':
                     flash("Hash functions cannot be decrypted.")
@@ -316,5 +375,7 @@ def index():
     return render_template('index.html', result=result)
 
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
+
