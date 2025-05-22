@@ -205,7 +205,7 @@ This will redirect you to a collection of images showcasing the core features an
 
 ## Youtube Link:
 
-Watch our project discussion and live demo here.
+Watch our project discussion and live demo here https://youtu.be/3nujpZl80YI.
 
 This video explains the features, algorithms used, and includes a full walkthrough of our web application in action.
 
