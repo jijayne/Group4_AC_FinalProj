@@ -141,10 +141,13 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    git clone https://github.com/jijayne/Group4_AC_FinalProj.git
    cd SecureFlow
 2. Install required packages:
+   ```bash
    pip install -r requirements.txt
 3. Run the Flask app:
+   ```bash
    python app.py
 4. Open your browser and navigate to:
+   ```bash
    http://127.0.0.1:5000
 
 ## License
@@ -152,7 +155,9 @@ This project is for educational purposes under the Applied Cryptography course. 
 
 ## 🙌 Acknowledgments
 CSPC College of Computer Studies
+
 Python and Flask communities
+
 PyCryptodome and hashlib maintainers
 
 
