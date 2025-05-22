@@ -1,6 +1,6 @@
 # 🔐 SecureFlow
 
-**Course:** Applied Cryptography  
+**Course:** CSAC 329- Applied Cryptography  
 **Date:** May 2025  
 
 ## 👥 Group Members
