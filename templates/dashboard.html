@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SecureFlow - Cryptographic</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<header>
+    <h1>Welcome to SecureFlow</h1>
+    <p>Explore symmetric, asymmetric, and hashing algorithms</p>
+    <nav>
+        <a href="{{ url_for('index') }}">Start</a>
+    </nav>
+</header>
+
+<main class="dashboard-layout">
+    <aside class="log-column">
+        <h2>Network Activity</h2>
+        <div id="networkPanel" class="log-panel">
+            <div id="networkContent"></div>
+        </div>
+    
+        <h2>Terminal Log</h2>
+        <div id="logPanel" class="log-panel">
+            <div id="logContent"></div>
+        </div>
+        <h2>Password Cracker</h2>
+        <div id="crackerPanel" class="log-panel">
+            <div id="crackerContent"></div>
+        </div>
+    </aside>
+    <section class="algo-column">
+        <!-- Symmetric Algorithms -->
+        <section>
+            <h2>Symmetric Algorithms</h2>
+            {% for algo in symmetric_algos %}
+            <div>
+                <h3>{{ algo.name }}</h3>
+                <p>{{ algo.description }}</p>
+                <a href="{{ url_for('algorithm_info', algo_type='symmetric', name=algo.name) }}">View Details</a>
+            </div>
+            {% endfor %}
+        </section>
+
+        <!-- Asymmetric Algorithms -->
+        <section>
+            <h2>Asymmetric Algorithms</h2>
+            {% for algo in asymmetric_algos %}
+            <div>
+                <h3>{{ algo.name }}</h3>
+                <p>{{ algo.description }}</p>
+                <a href="{{ url_for('algorithm_info', algo_type='asymmetric', name=algo.name) }}">View Details</a>
+            </div>
+            {% endfor %}
+        </section>
+
+        <!-- Hashing Functions -->
+        <section>
+            <h2>Hashing Functions</h2>
+            {% for algo in hashing_algos %}
+            <div>
+                <h3>{{ algo.name }}</h3>
+                <p>{{ algo.description }}</p>
+                <a href="{{ url_for('algorithm_info', algo_type='hashing', name=algo.name) }}">View Details</a>
+            </div>
+            {% endfor %}
+        </section>
+    </section>
+</main>
+
+
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
