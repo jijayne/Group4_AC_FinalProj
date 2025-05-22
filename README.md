@@ -53,7 +53,9 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
 
 ### 💡 Discussions
 🔸 Symmetric Encryption
+
 1. AES (Advanced Encryption Standard)
+   
    Type: Symmetric
    
    History: Adopted by NIST in 2001 as the successor to DES, developed by Belgian cryptographers Vincent Rijmen and Joan Daemen (Rijndael algorithm).
@@ -76,7 +78,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Implemented for legacy comparison in encryption options.
 
-4. XOR Cipher
+3. XOR Cipher
    
    Type: Symmetric
    
@@ -89,6 +91,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    Integration: Used for basic text encryption with a provided key.
 
 🔹 Asymmetric Encryption
+
 4. RSA (Rivest–Shamir–Adleman)
 
    Type: Asymmetric
@@ -114,6 +117,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    Integration: Users can generate ECC key pairs and encrypt/decrypt text using ECC.
 
 🔹 Hashing Algorithms
+
 6. MD5 (Message Digest Algorithm 5)
 
    Type: Hashing
@@ -138,7 +142,7 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
    
    Integration: Available for hashing text and file inputs.
 
-9. SHA-256
+8. SHA-256
     
    Type: Hashing
    
