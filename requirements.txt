@@ -71,7 +71,6 @@ python-dateutil==2.9.0.post0
 python-slugify==8.0.4
 pytube==15.0.0
 pytz==2025.2
-pywin32
 pyzmq==26.4.0
 RapidFuzz==3.13.0
 redis==5.2.1
