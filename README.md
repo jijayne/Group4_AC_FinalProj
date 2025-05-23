@@ -194,6 +194,12 @@ The **SecureFlow** application is built with a **Flask** backend and a frontend 
 4. Open your browser and navigate to:
    ```bash
    http://127.0.0.1:5000
+
+## 🔗 Access the Web App Instantly:
+
+Click the link below to open the app directly in your browser—no need to run any commands or install anything!
+
+Link: https://secureflow.pythonanywhere.com/
    
 ## Sample Runs/Outputs:
 
